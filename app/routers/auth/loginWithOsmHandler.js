@@ -9,7 +9,7 @@ const webBaseUrl = config.get('webBaseUrl');
 
 module.exports = function attachLoginHandler(router) {
   router.post(
-    '/login',
+    ['/login', '/login-osm'],
     // TODO validation
     async ctx => {
       const body = await rp.post({

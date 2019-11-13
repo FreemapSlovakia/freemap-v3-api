@@ -7,7 +7,7 @@ module.exports = function attachPatchUserHandler(router) {
   router.patch(
     '/settings',
     dbMiddleware(),
-    authenticator(true, false),
+    authenticator(true),
     bodySchemaValidator(patchUserSchema),
     dbMiddleware(),
     async ctx => {

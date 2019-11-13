@@ -130,7 +130,20 @@ async function initDatabase() {
     ) ENGINE=InnoDB`,
   ];
 
-  const updates = ['ALTER TABLE trackingPoint ADD COLUMN hdop FLOAT NULL'];
+  const updates = [
+    'ALTER TABLE trackingPoint ADD COLUMN hdop FLOAT NULL',
+    'ALTER TABLE user ADD COLUMN osmAuthToken VARCHAR(255) CHARSET latin1 COLLATE latin1_bin NULL UNIQUE',
+    'ALTER TABLE user ADD COLUMN osmAuthTokenSecret VARCHAR(255) CHARSET latin1 COLLATE latin1_bin NULL',
+    'ALTER TABLE user ADD COLUMN facebookAccessToken VARCHAR(255) CHARSET latin1 COLLATE latin1_bin NULL UNIQUE',
+    'ALTER TABLE user ADD COLUMN googleIdToken VARCHAR(2000) CHARSET latin1 COLLATE latin1_bin NULL UNIQUE',
+    `UPDATE user JOIN auth ON user.id = auth.userId SET
+      user.osmAuthToken = auth.osmAuthToken,
+      user.osmAuthTokenSecret = auth.osmAuthTokenSecret,
+      user.facebookAccessToken = auth.facebookAccessToken,
+      user.googleIdToken = auth.googleIdToken
+    `,
+    'ALTER TABLE auth DROP osmAuthToken, DROP osmAuthTokenSecret, DROP facebookAccessToken, DROP googleIdToken',
+  ];
 
   const db = await pool.getConnection();
   try {

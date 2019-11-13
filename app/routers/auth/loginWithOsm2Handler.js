@@ -4,6 +4,7 @@ const config = require('config');
 const { parseString } = require('xml2js');
 const { promisify } = require('util');
 const { dbMiddleware } = require('~/database');
+const authenticator = require('~/authenticator');
 const requestTokenRegistry = require('./requestTokenRegistry');
 const login = require('./loginProcessor');
 
@@ -14,9 +15,10 @@ const consumerSecret = config.get('oauth.consumerSecret');
 
 module.exports = function attachLogin2Handler(router) {
   router.post(
-    '/login2',
+    ['/login2', '/login-osm-2'],
     // TODO validation
     dbMiddleware(),
+    authenticator(false /*, true*/),
     async ctx => {
       const body = await rp.post({
         url: 'https://www.openstreetmap.org/oauth/access_token',
@@ -55,6 +57,7 @@ module.exports = function attachLogin2Handler(router) {
       await login(
         db,
         ctx,
+        'osm',
         'osmId',
         osmId,
         'osmAuthToken, osmAuthTokenSecret',
